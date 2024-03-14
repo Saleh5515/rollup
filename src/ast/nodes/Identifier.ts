@@ -193,7 +193,7 @@ export default class Identifier extends NodeBase implements PatternNode {
 		}
 	}
 
-	include(): void {
+	includePath(): void {
 		if (!this.deoptimized) this.applyDeoptimizations();
 		if (!this.included) {
 			this.included = true;
