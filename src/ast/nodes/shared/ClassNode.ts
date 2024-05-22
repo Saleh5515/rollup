@@ -96,14 +96,14 @@ export default class ClassNode extends NodeBase implements DeoptimizableEntity {
 	}
 
 	includePath(
-		path: ObjectPath,
+		_path: ObjectPath,
 		context: InclusionContext,
 		includeChildrenRecursively: IncludeChildren
 	): void {
 		if (!this.deoptimized) this.applyDeoptimizations();
 		this.included = true;
-		this.superClass?.includePath(path, context, includeChildrenRecursively);
-		this.body.includePath(path, context, includeChildrenRecursively);
+		this.superClass?.includePath(UNKNOWN_PATH, context, includeChildrenRecursively);
+		this.body.includePath(UNKNOWN_PATH, context, includeChildrenRecursively);
 		if (this.id) {
 			this.id.markDeclarationReached();
 			this.id.includePath();

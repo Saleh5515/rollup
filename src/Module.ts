@@ -22,7 +22,7 @@ import type Program from './ast/nodes/Program';
 import VariableDeclaration from './ast/nodes/VariableDeclaration';
 import type { NodeBase } from './ast/nodes/shared/Node';
 import ModuleScope from './ast/scopes/ModuleScope';
-import { EMPTY_PATH, type PathTracker, UNKNOWN_PATH } from './ast/utils/PathTracker';
+import { type PathTracker, UNKNOWN_PATH } from './ast/utils/PathTracker';
 import ExportDefaultVariable from './ast/variables/ExportDefaultVariable';
 import ExportShimVariable from './ast/variables/ExportShimVariable';
 import ExternalVariable from './ast/variables/ExternalVariable';
@@ -218,7 +218,6 @@ export default class Module {
 	readonly dynamicDependencies = new Set<Module | ExternalModule>();
 	readonly dynamicImporters: string[] = [];
 	readonly dynamicImports: DynamicImport[] = [];
-	private dynamicDependenciesIncludeAllExports = new Set<Module>();
 	excludeFromSourcemap: boolean;
 	execIndex = Infinity;
 	readonly implicitlyLoadedAfter = new Set<Module>();
@@ -695,15 +694,9 @@ export default class Module {
 		return this.info.moduleSideEffects === 'no-treeshake' || this.ast!.hasCachedEffects();
 	}
 
-	includeDynamicDependenciesIncludeAllExports() {
-		for (const dynamicDependencies of this.dynamicDependenciesIncludeAllExports) {
-			dynamicDependencies.includeAllExports(true);
-		}
-	}
-
 	include(): void {
 		const context = createInclusionContext();
-		if (this.ast!.shouldBeIncluded(context)) this.ast!.includePath(EMPTY_PATH, context, false);
+		if (this.ast!.shouldBeIncluded(context)) this.ast!.includePath(UNKNOWN_PATH, context, false);
 	}
 
 	includeAllExports(includeNamespaceMembers: boolean): void {
@@ -744,7 +737,7 @@ export default class Module {
 	}
 
 	includeAllInBundle(): void {
-		this.ast!.includePath(EMPTY_PATH, createInclusionContext(), true);
+		this.ast!.includePath(UNKNOWN_PATH, createInclusionContext(), true);
 		this.includeAllExports(false);
 	}
 
@@ -1345,10 +1338,9 @@ export default class Module {
 				: undefined;
 
 			if (importedNames) {
-				this.dynamicDependenciesIncludeAllExports.delete(resolution);
 				resolution.includeExportsByNames(importedNames);
 			} else {
-				this.dynamicDependenciesIncludeAllExports.add(resolution);
+				resolution.includeAllExports(true);
 			}
 		}
 	}

@@ -8,7 +8,7 @@ import { type NodeRenderOptions, type RenderOptions } from '../../utils/renderHe
 import type { DeoptimizableEntity } from '../DeoptimizableEntity';
 import type { HasEffectsContext, InclusionContext } from '../ExecutionContext';
 import { INTERACTION_CALLED } from '../NodeInteractions';
-import { EMPTY_PATH, SHARED_RECURSION_TRACKER } from '../utils/PathTracker';
+import { EMPTY_PATH, SHARED_RECURSION_TRACKER, UNKNOWN_PATH } from '../utils/PathTracker';
 import type { ObjectPath, PathTracker } from '../utils/PathTracker';
 import Identifier from './Identifier';
 import MemberExpression from './MemberExpression';
@@ -94,7 +94,7 @@ export default class CallExpression
 			}
 		} else {
 			this.included = true;
-			this.callee.includePath(path, context, false);
+			this.callee.includePath(UNKNOWN_PATH, context, false);
 		}
 		this.callee.includeCallArguments(context, this.arguments);
 	}
