@@ -416,6 +416,8 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
+      - name: test 2
+        run: npm run build:ast-converters
       - name: Download napi artifacts
         uses: actions/download-artifact@v4
         with:
